@@ -1,2 +1,2 @@
 # OS
-A operating system
+An operating system
