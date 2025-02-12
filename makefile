@@ -14,7 +14,8 @@ OBJS = $(BUILD_DIR)/main.o $(BUILD_DIR)/init.o $(BUILD_DIR)/interrupt.o \
 		$(BUILD_DIR)/string.o $(BUILD_DIR)/thread.o $(BUILD_DIR)/switch.o \
 		$(BUILD_DIR)/list.o $(BUILD_DIR)/console.o $(BUILD_DIR)/sync.o \
 		$(BUILD_DIR)/keyboard.o $(BUILD_DIR)/ioqueue.o $(BUILD_DIR)/tss.o \
-		$(BUILD_DIR)/process.o
+		$(BUILD_DIR)/process.o $(BUILD_DIR)/syscall-init.o $(BUILD_DIR)/syscall.o\
+		$(BUILD_DIR)/stdio.o\
 ##############c 代码编译###############
 $(BUILD_DIR)/main.o: kernel/main.c lib/kernel/print.h \
 	lib/stdint.h kernel/init.h thread/thread.h
@@ -57,6 +58,12 @@ $(BUILD_DIR)/tss.o: userprog/tss.c userprog/tss.h
 	$(CC) $(CFLAGS) $< -o $@
 $(BUILD_DIR)/process.o: userprog/process.c userprog/process.h
 	$(CC) $(CFLAGS) $< -o $@
+$(BUILD_DIR)/syscall-init.o: userprog/syscall-init.c userprog/syscall-init.h
+	$(CC) $(CFLAGS) $< -o $@
+$(BUILD_DIR)/syscall.o: lib/user/syscall.c lib/user/syscall.h
+	$(CC) $(CFLAGS) $< -o $@
+$(BUILD_DIR)/stdio.o: lib/stdio.c lib/stdio.h
+	$(CC) $(CFLAGS) $< -o $@
 ##############汇编代码编译###############
 $(BUILD_DIR)/kernel.o: kernel/kernel.S
 	$(AS) $(ASFLAGS) $< -o $@
@@ -78,7 +85,7 @@ clean:
 build: $(BUILD_DIR)/kernel.bin
 
 hd:
-	dd if=build/kernel.bin of=/Programs/bochs/bin/hd60M.img bs=512 count=200 seek=9 conv=notrunc
+	dd if=build/kernel.bin of=/home/linux/Documents/Programs/bochs/hd60M.img bs=512 count=200 seek=9 conv=notrunc
 
 all: mk_dir build hd
 

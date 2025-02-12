@@ -4,9 +4,13 @@
 #include "list.h"
 #include "bitmap.h" 
 #include "memory.h" 
+
+
 /* 自定义通用函数类型,它将在很多线程函数中作为形参类型 */
 typedef void thread_func(void*);
-typedef int16_t pid_t; 
+
+typedef int16_t pid_t;
+
 /* 进程或线程的状态 */
 enum task_status {
 	TASK_RUNNING,
@@ -69,13 +73,15 @@ struct thread_stack {
 	thread_func* function;	// 由 kernel_thread 所调用的函数名
 	void* func_arg;		// 由 kernel_thread 所调用的函数所需的参数
 };
+
+
 /* 进程或线程的 pcb,程序控制块 */
 struct task_struct {
 	uint32_t* self_kstack;	// 各内核线程都用自己的内核栈
 	pid_t pid;
 	enum task_status status;
-	uint8_t priority;	// 线程优先级
 	char name[16];
+	uint8_t priority;	// 线程优先级
 
 	uint8_t ticks;		// 每次在处理器上执行的时间嘀嗒数	
 
@@ -90,13 +96,14 @@ struct task_struct {
 	struct list_elem all_list_tag;
 
 	uint32_t* pgdir;		// 进程自己页表的虚拟地址
+	struct virtual_addr userprog_vaddr; // 用户进程的虚拟地址
 	uint32_t stack_magic;	//栈的边界标记,用于检测栈的溢出
 };
 //......以下至结束是函数声明
 
 /* 初始化线程栈 thread_stack,
 将待执行的函数和参数放到 thread_stack 中相应的位置 */
-void thread_create(struct task_struct* pthread, thread_func function, 						void* func_arg);
+void thread_create(struct task_struct* pthread, thread_func function, void* func_arg);
 
 /* 获取当前线程 pcb 指针 */
 struct task_struct* running_thread();

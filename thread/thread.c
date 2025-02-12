@@ -18,7 +18,7 @@ extern void switch_to(struct task_struct* cur, struct task_struct* next);
 
 /* 初始化线程栈 thread_stack,
 将待执行的函数和参数放到 thread_stack 中相应的位置 */
-void thread_create(struct task_struct* pthread, thread_func function, 						void* func_arg){
+void thread_create(struct task_struct* pthread, thread_func function, void* func_arg){
 	/* 先预留中断使用栈的空间,可见 thread.h 中定义的结构 */
 	pthread->self_kstack -= sizeof(struct intr_stack);
 	/* 再留出线程栈空间,可见 thread.h 中定义 */
