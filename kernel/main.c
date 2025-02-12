@@ -52,7 +52,7 @@ console_put_str("9**********\n");
 	while(1) {
 		//console_put_str("Main ");
 		uint32_t temp=0;
-		console_put_int(temp++);
+		//console_put_int(temp++);
 		//console_put_str("main))))))))))\n");
 	};
 

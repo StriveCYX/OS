@@ -20,6 +20,10 @@ uint32_t ticks;		// ticks 是内核自中断开启以来总共的嘀嗒数
 static void intr_timer_handler(void) {
 	struct task_struct* cur_thread = running_thread();
 
+	console_put_str("intr_timer_handler put name:");
+	console_put_str(cur_thread->name);
+	console_put_str("  ");
+
 	ASSERT(cur_thread->stack_magic == 0x19870916); // 检查栈是否溢出
 
 	cur_thread->elapsed_ticks++;	// 记录此线程占用的 cpu 时间
