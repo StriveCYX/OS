@@ -72,31 +72,27 @@ void tss_init() {
     /* gdt 段基址为 0x900，把 tss 放到第 4 个位置，也就是 0x900+0x20 的位置 */ 
     /* 在 gdt 中添加 dpl 为 0 的 TSS 描述符 */ 
 
-	//**********注意******注意*************注意*****注意
-	//我的gdt开始地址是0x904,不是0x900
 
-    *((struct gdt_desc*)(0xc0000920+4)) = make_gdt_desc((uint32_t*)&tss,\
+    *((struct gdt_desc*)(0xc0000920)) = make_gdt_desc((uint32_t*)&tss,\
 													 tss_size - 1,\
 													 TSS_ATTR_LOW,\
 													 TSS_ATTR_HIGH\
 													);
     /* 在 gdt 中添加 dpl 为 3 的数据段和代码段描述符 */ 
-    *((struct gdt_desc*)(0xc0000928+4)) = make_gdt_desc((uint32_t*)0,\ 
+    *((struct gdt_desc*)(0xc0000928)) = make_gdt_desc((uint32_t*)0,\ 
                                                     0xfffff, \ 
                                                     GDT_CODE_ATTR_LOW_DPL3, \ 
                                                     GDT_ATTR_HIGH\ 
                                                     ); 
   
-	*((struct gdt_desc*)(0xc0000930+4)) = make_gdt_desc((uint32_t*)0,\ 
+	*((struct gdt_desc*)(0xc0000930)) = make_gdt_desc((uint32_t*)0,\ 
                                                     0xfffff, \ 
                                                     GDT_DATA_ATTR_LOW_DPL3, \ 
                                                     GDT_ATTR_HIGH\ 
                                                     ); 
 
-    /* gdt 16 位的limit 和 32位的段基址 */ 
-	//**********注意******注意*************注意*****注意
-	//我的gdt开始地址是0x904,不是0x900
-    uint64_t gdt_operand = ((8 * 7 - 1) | ((uint64_t)(uint32_t)0xc0000904 << 16)); // 7 个描述符大小
+    /* gdt 16 位的limit 和 32位的段基址 */
+    uint64_t gdt_operand = ((8 * 7 - 1) | ((uint64_t)(uint32_t)0xc0000900 << 16)); // 7 个描述符大小
     asm volatile ("lgdt %0" : : "m" (gdt_operand)); 
     asm volatile ("ltr %w0" : : "r" (SELECTOR_TSS)); 
 

@@ -85,7 +85,7 @@ clean:
 build: $(BUILD_DIR)/kernel.bin
 
 hd:
-	dd if=build/kernel.bin of=/home/linux/Documents/Programs/bochs/hd60M.img bs=512 count=200 seek=9 conv=notrunc
+	dd if=build/kernel.bin of=/home/cent-os/Programs/bochs/hd60M.img bs=512 count=200 seek=9 conv=notrunc
 
 all: mk_dir build hd
 

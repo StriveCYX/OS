@@ -3,7 +3,7 @@
 #include "stdint.h"
 
 //存储内存大小的地址
-#define MEMORY_SIZE_ADDRESS 0xb04
+#define MEMORY_SIZE_ADDRESS 0xb00
 
 // ----------------  GDT描述符属性  ----------------
 
