@@ -8,6 +8,12 @@
 #include "syscall.h"
 #include "stdio.h"
 
+/* 在线程中运行的函数 */
+void k_thread_a(void *arg);
+
+/* 在线程中运行的函数 */
+void k_thread_b(void *arg);
+
 int main(void)
 {
    put_str("I am kernel\n");
