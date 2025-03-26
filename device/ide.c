@@ -411,7 +411,7 @@ void ide_init()
     channel_cnt = DIV_ROUND_UP(hd_cnt, 2);
     // 一个 ide 通道上有两个硬盘，根据硬盘数量反推有几个 ide 通道
     struct ide_channel *channel;
-    uint8_t channel_no = 0;
+    uint8_t channel_no = 0, dev_no = 0;
 
     /* 处理每个通道上的硬盘 */
     while (channel_no < channel_cnt)
@@ -469,11 +469,10 @@ void ide_init()
     dev_no = 0;
     // 将硬盘驱动器号置 0，为下一个 channel 的两个硬盘初始化
     channel_no++; // 下一个 channel
-}
 
-printk("\n all partition info\n");
-/* 打印所有分区信息 */
-list_traversal(&partition_list, partition_info, (int)NULL);
+    printk("\n all partition info\n");
+    /* 打印所有分区信息 */
+    list_traversal(&partition_list, partition_info, (int)NULL);
 
-printk("ide_init done\n");
+    printk("ide_init done\n");
 }
