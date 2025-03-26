@@ -66,7 +66,11 @@ $(BUILD_DIR)/stdio.o: lib/stdio.c lib/stdio.h
 	$(CC) $(CFLAGS) $< -o $@
 $(BUILD_DIR)/ide.o: device/ide.c device/ide.h
 	$(CC) $(CFLAGS) $< -o $@
+<<<<<<< HEAD
 $(BUILD_DIR)/stdio-kernel.o: lib/kernel/stdio-kernel.c lib/kernel/stdio-kernel.h
+=======
+$(BUILD_DIR)/stdio-kernel.o: lib/kernel/stdio-kerne.c lib/kernel/stdio-kerne.h
+>>>>>>> d5e41180d1bde23cad8b5a8d5de99b6f6ddd770a
 	$(CC) $(CFLAGS) $< -o $@
 ##############汇编代码编译###############
 $(BUILD_DIR)/kernel.o: kernel/kernel.S
