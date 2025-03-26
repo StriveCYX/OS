@@ -1,4 +1,5 @@
 #include "ide.h"
+#include "io.h"
 
 /* 定义硬盘各寄存器的端口号 */
 #define reg_data(channel) (channel->port_base + 0)

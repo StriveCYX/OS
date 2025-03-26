@@ -48,3 +48,6 @@ struct ide_channel
     struct semaphore disk_done; // 用于阻塞、唤醒驱动程序
     struct disk devices[2];     // 一个通道上连接两个硬盘，一主一从
 };
+
+/* 硬盘数据结构初始化 */
+void ide_init();
