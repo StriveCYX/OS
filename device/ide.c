@@ -454,6 +454,8 @@ void ide_init()
         channel_no++; // 下一个 channel
     }
 
+    list_init(&partition_list);     //初始化partition_list
+
     /* 分别获取两个硬盘的参数及分区信息 */
     while (dev_no < 2)
     {
