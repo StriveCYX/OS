@@ -1,3 +1,6 @@
+#ifndef _DEVICE_IDE_H
+#define _DEVICE_IDE_H
+
 #include "stdint.h"
 #include "bitmap.h"
 #include "list.h"
@@ -50,3 +53,4 @@ struct ide_channel
 
 /* 硬盘数据结构初始化 */
 void ide_init();
+#endif
