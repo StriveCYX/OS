@@ -2,6 +2,7 @@
 #define __FS_DIR_H
 #define MAX_FILE_NAME_LEN 16    // 最大文件名长度
 #include "stdint.h"
+#include "inode.h"
 
 /* 目录结构 */
 struct dir
