@@ -6,6 +6,7 @@
 #include "list.h"
 #include "sync.h"
 
+
 /* 分区结构 */
 struct partition
 {
@@ -51,6 +52,14 @@ struct ide_channel
     struct disk devices[2];     // 一个通道上连接两个硬盘，一主一从
 };
 
+//下面两个定义在ide.c中
+extern uint8_t channel_cnt; // 按硬盘数计算的通道数
+extern struct ide_channel channels[2];  // 有两个 ide 通道
+
 /* 硬盘数据结构初始化 */
 void ide_init();
+/* 从硬盘读取 sec_cnt 个扇区到 buf */
+void ide_read(struct disk *hd, uint32_t lba, void *buf, uint32_t sec_cnt);
+/* 将 buf 中 sec_cnt 扇区数据写入硬盘 */
+void ide_write(struct disk *hd, uint32_t lba, void *buf, uint32_t sec_cnt);
 #endif
