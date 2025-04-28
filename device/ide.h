@@ -55,6 +55,7 @@ struct ide_channel
 //下面两个定义在ide.c中
 extern uint8_t channel_cnt; // 按硬盘数计算的通道数
 extern struct ide_channel channels[2];  // 有两个 ide 通道
+extern struct list partition_list;      // 分区队列
 
 /* 硬盘数据结构初始化 */
 void ide_init();
