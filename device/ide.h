@@ -5,6 +5,7 @@
 #include "bitmap.h"
 #include "list.h"
 #include "sync.h"
+#include "super_block.h"
 
 
 /* 分区结构 */

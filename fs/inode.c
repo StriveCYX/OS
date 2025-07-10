@@ -1,3 +1,7 @@
+#include "inode.h"
+#include "stdint.h"
+#include "ide.h"
+
 /* 用来存储 inode 位置 */
 struct inode_position
 {
