@@ -1,3 +1,6 @@
+#include "file.h"
+#include "fs.h"
+
 /* 文件表 */
 struct file file_table[MAX_FILE_OPEN];
 
@@ -57,7 +60,6 @@ int32_t inode_bitmap_alloc(struct partition *part)
 }
 
 /* 分配 1 个扇区，返回其扇区地址 */
-
 int32_t block_bitmap_alloc(struct partition *part)
 {
     int32_t bit_idx = bitmap_scan(&part->block_bitmap, 1);
@@ -74,10 +76,9 @@ int32_t block_bitmap_alloc(struct partition *part)
 /* 将内存中 bitmap 第 bit_idx 位所在的 512 字节同步到硬盘 */
 void bitmap_sync(struct partition *part, uint32_t bit_idx, uint8_t btmp)
 {
-    uint32_t off_sec = bit_idx / 4096;
-    // 本 i 结点索引相对于位图的扇区偏移量
-    uint32_t off_size = off_sec * BLOCK_SIZE;
-    // 本 i 结点索引相对于位图的字节偏移量
+    uint32_t off_sec = bit_idx / 4096;          // 本 i 结点索引相对于位图的扇区偏移量
+    uint32_t off_size = off_sec * BLOCK_SIZE;   // 本 i 结点索引相对于位图的字节偏移量
+
     uint32_t sec_lba;
     uint8_t *bitmap_off;
 
