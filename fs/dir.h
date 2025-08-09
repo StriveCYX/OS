@@ -7,6 +7,8 @@
 #include "ide.h"
 #include "inode.h"
 
+extern struct dir root_dir;    // 根目录
+
 /* 目录结构 */
 struct dir
 {
