@@ -9,7 +9,8 @@
 #define BLOCK_SIZE SECTOR_SIZE  // 块字节大小
 #define MAX_PATH_LEN 512        // 路径最大长度
 
-extern struct partition *cur_part; // 默认情况下操作的是哪个分区
+// extern struct partition *cur_part; // 默认情况下操作的是哪个分区
+struct partition *cur_part; // 默认情况下操作的是哪个分区
 
 /* 文件类型 */
 enum file_types

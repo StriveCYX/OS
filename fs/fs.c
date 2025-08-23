@@ -7,7 +7,6 @@
 #include "stdio-kernel.h"
 #include "string.h"
 
-struct partition *cur_part; // 默认情况下操作的是哪个分区
 
 /* 在分区链表中找到名为 part_name 的分区，并将其指针赋值给 cur_part */
 static bool mount_partition(struct list_elem *pelem, int arg)
