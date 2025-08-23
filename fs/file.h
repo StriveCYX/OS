@@ -45,4 +45,6 @@ int32_t block_bitmap_alloc(struct partition *part);
 /* 将内存中 bitmap 第 bit_idx 位所在的 512 字节同步到硬盘 */
 void bitmap_sync(struct partition *part, uint32_t bit_idx, uint8_t btmp);
 
+/*创建文件，若成功则返回文件描述符，否则返回-1 */
+int32_t file_create(struct dir *parent_dir, char *filename, uint8_t flag);
 #endif
