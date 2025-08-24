@@ -53,4 +53,8 @@ static char *path_parse(char *pathname, char *name_store);
 
 /* 返回路径深度，比如/a/b/c，深度为 3 */
 int32_t path_depth_cnt(char *pathname);
+
+/* 打开或创建文件成功后，返回文件描述符，否则返回-1 */
+int32_t sys_open(const char* pathname, uint8_t flags);
+
 #endif
