@@ -160,7 +160,7 @@ static void partition_format(struct disk *hd, struct partition *part)
      * 2 将块位图初始化并写入 sb.block_bitmap_lba *
      *************************************/
     /* 初始化块位图 block_bitmap */
-    buf[0] |= 0x01; // 第 0 个块预留给根目录，位图中先占位
+    buf[0] |= 0x01; // 第 0 个块预留给根目录，位图中先占位，将第 0 个位设为 1
     uint32_t block_bitmap_last_byte = block_bitmap_bit_len / 8;
     uint8_t block_bitmap_last_bit = block_bitmap_bit_len % 8;
     uint32_t last_size = SECTOR_SIZE -
@@ -174,7 +174,7 @@ static void partition_format(struct disk *hd, struct partition *part)
     /* 2 再将上一步中覆盖的最后一字节内的有效位重新置 0 */
     uint8_t bit_idx = 0;
     // 为什么不是while (bit_idx < block_bitmap_last_bit)，下面为什么用<=
-    while (bit_idx < block_bitmap_last_bit) // 书上源代码是while (bit_idx < block_bitmap_last_bit)
+    while (bit_idx < block_bitmap_last_bit) // 书上源代码是while (bit_idx <= block_bitmap_last_bit)
     {
         buf[block_bitmap_last_byte] &= ~(1 << bit_idx++);
     }
