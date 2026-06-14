@@ -26,37 +26,28 @@ struct partition
 struct disk
 {
     char name[8]; // 本硬盘的名称
-    struct ide_channel *my_channel;
-    // 此块硬盘归属于哪个 ide 通道
-    uint8_t dev_no;
-    // 本硬盘是主 0，还是从 1
-    struct partition prim_parts[4];
-    // 主分区顶多是 4 个
-    struct partition logic_parts[8];
-    // 逻辑分区数量无限，但总得有个支持的上限，那就支持 8 个
+    struct ide_channel *my_channel;     // 此块硬盘归属于哪个 ide 通道
+    uint8_t dev_no;                     // 本硬盘是主 0，还是从 1
+    struct partition prim_parts[4];     // 主分区顶多是 4 个
+    struct partition logic_parts[8];    // 逻辑分区数量无限，但总得有个支持的上限，那就支持 8 个
 };
 
 /* ata 通道结构 */
 struct ide_channel
 {
-    char name[8];
-    // 本 ata 通道名称
-    uint16_t port_base;
-    // 本通道的起始端口号
-    uint8_t irq_no;
-    // 本通道所用的中断号
-    struct lock lock;
-    // 通道锁
-    bool expecting_intr;
-    // 表示等待硬盘的中断
+    char name[8];               // 本 ata 通道名称
+    uint16_t port_base;         // 本通道的起始端口号
+    uint8_t irq_no;             // 本通道所用的中断号
+    struct lock lock;           // 通道锁
+    bool expecting_intr;        // 表示等待硬盘的中断
     struct semaphore disk_done; // 用于阻塞、唤醒驱动程序
     struct disk devices[2];     // 一个通道上连接两个硬盘，一主一从
 };
 
 //下面两个定义在ide.c中
-extern uint8_t channel_cnt; // 按硬盘数计算的通道数
-extern struct ide_channel channels[2];  // 有两个 ide 通道
-extern struct list partition_list;      // 分区队列
+extern uint8_t channel_cnt;               // 按硬盘数计算的通道数
+extern struct ide_channel channels[2];    // 有两个 ide 通道
+extern struct list partition_list;        // 分区队列
 
 /* 硬盘数据结构初始化 */
 void ide_init();
