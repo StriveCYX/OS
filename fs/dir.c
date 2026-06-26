@@ -27,17 +27,17 @@ bool search_dir_entry(struct partition *part, struct dir *pdir,
     uint32_t block_cnt = 140; // 12 个直接块+128 个一级间接块=140 块
 
     /* 12 个直接块大小+128 个间接块,共 560 字节 */
-    uint32_t *all_blocks = (uint32_t *)sys_malloc(48 + 512);
-    if (all_blocks == NULL)
+    uint32_t *all_blocks_lba = (uint32_t *)sys_malloc(48 + 512);
+    if (all_blocks_lba == NULL)
     {
-        printk("search_dir_entry: sys_malloc for all_blocks failed");
+        printk("search_dir_entry: sys_malloc for all_blocks_lba failed");
         return false;
     }
 
     uint32_t block_idx = 0;
     while (block_idx < 12)
     {
-        all_blocks[block_idx] = pdir->inode->i_sectors[block_idx];
+        all_blocks_lba[block_idx] = pdir->inode->i_sectors[block_idx];
         block_idx++;
     }
     block_idx = 0;
@@ -45,9 +45,9 @@ bool search_dir_entry(struct partition *part, struct dir *pdir,
     if (pdir->inode->i_sectors[12] != 0)
     { // 若含有一级间接块表
         ide_read(part->my_disk,
-                 pdir->inode->i_sectors[12], all_blocks + 12, 1);
+                 pdir->inode->i_sectors[12], all_blocks_lba + 12, 1);
     }
-    /* 至此，all_blocks 存储的是该文件或目录的所有扇区地址 */
+    /* 至此，all_blocks_lba 存储的是该文件或目录的所有扇区地址 */
 
     /* 写目录项的时候已保证目录项不跨扇区，
      * 这样读目录项时容易处理，只申请容纳 1 个扇区的内存 */
@@ -62,13 +62,12 @@ bool search_dir_entry(struct partition *part, struct dir *pdir,
     while (block_idx < block_cnt)
     {
         /* 块地址为 0 时表示该块中无数据，继续在其他块中找 */
-        if (all_blocks[block_idx] == 0)
+        if (all_blocks_lba[block_idx] == 0)
         {
-
             block_idx++;
             continue;
         }
-        ide_read(part->my_disk, all_blocks[block_idx], buf, 1);
+        ide_read(part->my_disk, all_blocks_lba[block_idx], buf, 1);
 
         uint32_t dir_entry_idx = 0;
         /* 遍历扇区中所有目录项 */
@@ -79,7 +78,7 @@ bool search_dir_entry(struct partition *part, struct dir *pdir,
             {
                 memcpy(dir_e, p_de, dir_entry_size);
                 sys_free(buf);
-                sys_free(all_blocks);
+                sys_free(all_blocks_lba);
                 return true;
             }
             dir_entry_idx++;
@@ -92,7 +91,7 @@ bool search_dir_entry(struct partition *part, struct dir *pdir,
         memset(buf, 0, SECTOR_SIZE); // 将 buf 清 0，下次再用
     }
     sys_free(buf);
-    sys_free(all_blocks);
+    sys_free(all_blocks_lba);
     return false;
 }
 
@@ -137,14 +136,14 @@ bool sync_dir_entry(struct dir *parent_dir,
     int32_t block_lba = -1;
 
     /* 将该目录的所有扇区地址
-    （12 个直接块+ 128 个间接块）存入 all_blocks */
+    （12 个直接块+ 128 个间接块）存入 all_blocks_lba */
     uint8_t block_idx = 0;
-    uint32_t all_blocks[140] = {0}; // all_blocks 保存目录所有的块
+    uint32_t all_blocks_lba[140] = {0}; // all_blocks_lba 保存目录所有的块
 
-    /* 将 12 个直接块存入 all_blocks */
+    /* 将 12 个直接块存入 all_blocks_lba */
     while (block_idx < 12)
     {
-        all_blocks[block_idx] = dir_inode->i_sectors[block_idx];
+        all_blocks_lba[block_idx] = dir_inode->i_sectors[block_idx];
         block_idx++;
     }
 
@@ -155,10 +154,10 @@ bool sync_dir_entry(struct dir *parent_dir,
      * 在不超过文件大小的情况下申请新扇区来存储新目录项 */
     block_idx = 0;
     while (block_idx < 140)
-    {
-        // 文件（包括目录）最大支持 12 个直接块+128 个间接块＝140 个块
+    {    // 文件（包括目录）最大支持 12 个直接块+128 个间接块＝140 个块
+        
         block_bitmap_idx = -1;
-        if (all_blocks[block_idx] == 0)
+        if (all_blocks_lba[block_idx] == 0)
         { // 在三种情况下分配块
             block_lba = block_bitmap_alloc(cur_part);
             if (block_lba == -1)
@@ -176,7 +175,7 @@ bool sync_dir_entry(struct dir *parent_dir,
             if (block_idx < 12)
             { // 若是直接块
                 dir_inode->i_sectors[block_idx] =
-                    all_blocks[block_idx] = block_lba;
+                    all_blocks_lba[block_idx] = block_lba;
             }
             else if (block_idx == 12)
             {
@@ -202,29 +201,29 @@ bool sync_dir_entry(struct dir *parent_dir,
                 ASSERT(block_bitmap_idx != -1);
                 bitmap_sync(cur_part, block_bitmap_idx, BLOCK_BITMAP);
 
-                all_blocks[12] = block_lba;     /* 把新分配的第 0 个间接块地址写入一级间接块表 */
+                all_blocks_lba[12] = block_lba;     /* 把新分配的第 0 个间接块地址写入一级间接块表 */
                 ide_write(cur_part->my_disk,
-                          dir_inode->i_sectors[12], all_blocks + 12, 1);
+                          dir_inode->i_sectors[12], all_blocks_lba + 12, 1);
             }
             else
             { // 若是间接块未分配
-                all_blocks[block_idx] = block_lba;
+                all_blocks_lba[block_idx] = block_lba;
                 /* 把新分配的第(block_idx-12)个间接块地址写入一级间接块表 */
                 ide_write(cur_part->my_disk,
-                          dir_inode->i_sectors[12], all_blocks + 12, 1);
+                          dir_inode->i_sectors[12], all_blocks_lba + 12, 1);
             }
 
             /* 再将新目录项 p_de 写入新分配的间接块 */
             memset(io_buf, 0, 512);
             memcpy(io_buf, p_de, dir_entry_size);
-            ide_write(cur_part->my_disk, all_blocks[block_idx], io_buf, 1);
+            ide_write(cur_part->my_disk, all_blocks_lba[block_idx], io_buf, 1);
             dir_inode->i_size += dir_entry_size;
             return true;
         }
 
         /* 若第 block_idx 块已存在，将其读进内存，\
         然后在该块中查找空目录项 */
-        ide_read(cur_part->my_disk, all_blocks[block_idx], io_buf, 1);
+        ide_read(cur_part->my_disk, all_blocks_lba[block_idx], io_buf, 1);
         /* 在扇区内查找空目录项 */
         uint8_t dir_entry_idx = 0;
         while (dir_entry_idx < dir_entrys_per_sec)
@@ -234,7 +233,7 @@ bool sync_dir_entry(struct dir *parent_dir,
                 // FT_UNKNOWN 为 0，无论是初始化，或是删除文件后，
                 // 都会将 f_type 置为 FT_UNKNOWN
                 memcpy(dir_e + dir_entry_idx, p_de, dir_entry_size);
-                ide_write(cur_part->my_disk, all_blocks[block_idx], io_buf, 1);
+                ide_write(cur_part->my_disk, all_blocks_lba[block_idx], io_buf, 1);
 
                 dir_inode->i_size += dir_entry_size;
                 return true;

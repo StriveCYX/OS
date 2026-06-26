@@ -1,5 +1,7 @@
 #include "file.h"
 #include "fs.h"
+#include "dir.h"
+#include "inode.h"
 
 /* 文件表 */
 struct file file_table[MAX_FILE_OPEN];

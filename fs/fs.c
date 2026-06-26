@@ -20,6 +20,10 @@ static bool mount_partition(struct list_elem *pelem, int arg)
         /* sb_buf 用来存储从硬盘上读入的超级块 */
         struct super_block *sb_buf =
             (struct super_block *)sys_malloc(SECTOR_SIZE);
+        if (sb_buf == NULL)
+        {
+            PANIC("alloc memory failed!");
+        }
 
         /* 在内存中创建分区 cur_part 的超级块 */
         cur_part->sb = (struct super_block *)

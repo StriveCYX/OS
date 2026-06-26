@@ -29,6 +29,9 @@ enum bitmap_type
 
 #define MAX_FILE_OPEN 32 // 系统可打开的最大文件数
 
+/* 文件表 */
+extern struct file file_table[MAX_FILE_OPEN];
+
 /*从文件表 file_table 中获取一个空闲位，成功返回下标，失败返回-1 */
 int32_t get_free_slot_in_global(void);
 
