@@ -318,7 +318,7 @@ void filesys_init()
 }
 
 /* 将最上层路径名称解析出来 */
-static char *path_parse(char *pathname, char *name_store)
+static const char *path_parse(const char *pathname, char *name_store)
 {
     if (pathname[0] == '/')
     { // 根目录不需要单独解析
@@ -383,7 +383,7 @@ static int search_file(const char *pathname,
     /* 保证 pathname 至少是这样的路径/x，且小于最大长度 */
     ASSERT(pathname[0] == '/' && path_len > 1 &&
            path_len < MAX_PATH_LEN);
-    char *sub_path = (char *)pathname;
+    const char *sub_path = pathname;
     struct dir *parent_dir = &root_dir;
     struct dir_entry dir_e;
 
@@ -396,8 +396,8 @@ static int search_file(const char *pathname,
     uint32_t parent_inode_no = 0; // 父目录的 inode 号
 
     sub_path = path_parse(sub_path, name);
-    while (name[0])
-    { // 若第一个字符就是结束符，结束循环
+    while (name[0]) // 若第一个字符就是结束符，结束循环
+    {
         /* 记录查找过的路径，但不能超过 searched_path 的长度 512 字节 */
         ASSERT(strlen(searched_record->searched_path) < 512);
 
@@ -442,7 +442,15 @@ static int search_file(const char *pathname,
     dir_close(searched_record->parent_dir);
 
     /* 保存被查找目录的直接父目录 */
-    searched_record->parent_dir = dir_open(cur_part, parent_inode_no);
+    // searched_record->parent_dir = dir_open(cur_part, parent_inode_no); //书上原方法
+    if (parent_inode_no == root_dir.inode->i_no)
+    {
+        searched_record->parent_dir = &root_dir;
+    }
+    else
+    {
+        searched_record->parent_dir = dir_open(cur_part, parent_inode_no);
+    }
     searched_record->file_type = FT_DIRECTORY;
     return dir_e.i_no;
 }
@@ -456,7 +464,7 @@ int32_t sys_open(const char *pathname, uint8_t flags)
         printk("can`t open a directory %s\n", pathname);
         return -1;
     }
-    ASSERT(flag <= 7);
+    ASSERT(flags <= 7);
     int32_t fd = -1; // 默认为找不到
 
     struct path_search_record searched_record;
