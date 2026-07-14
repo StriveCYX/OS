@@ -178,13 +178,11 @@ bool sync_dir_entry(struct dir *parent_dir,
                     all_blocks_lba[block_idx] = block_lba;
             }
             else if (block_idx == 12)
-            {
-                // 若是尚未分配一级间接块表（block_idx 等于 12 表示第 0 个间接块地址为 0）
-                dir_inode->i_sectors[12] = block_lba;
-                // 将上面分配的块作为一级间接块表地址
+            {   // 若是尚未分配一级间接块表（block_idx 等于 12 表示第 0 个间接块地址为 0）
+                dir_inode->i_sectors[12] = block_lba;   // 将上面分配的块作为一级间接块表地址
                 block_lba = -1;
-                block_lba = block_bitmap_alloc(cur_part);
-                // 再分配一个块作为第 0 个间接块
+                block_lba = block_bitmap_alloc(cur_part);   // 再分配一个块作为第 0 个间接块
+                
                 if (block_lba == -1)
                 {
                     block_bitmap_idx = dir_inode->i_sectors[12] -

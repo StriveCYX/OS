@@ -59,8 +59,8 @@ void inode_sync(struct partition *part, struct inode *inode, void *io_buf)
     /* 以下 inode 的三个成员只存在于内存中，
    现在将 inode 同步到硬盘，清掉这三项即可 */
     pure_inode.i_open_cnts = 0;
-    pure_inode.write_deny = false;
-    // 置为 false，以保证在硬盘中读出时为可写
+    pure_inode.write_deny = false;  // 置为 false，以保证在硬盘中读出时为可写
+    
     pure_inode.inode_tag.prev = pure_inode.inode_tag.next = NULL;
 
     char *inode_buf = (char *)io_buf;
