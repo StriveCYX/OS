@@ -387,8 +387,10 @@ static int search_file(const char *pathname,
     struct dir *parent_dir = &root_dir;
     struct dir_entry dir_e;
 
-    /* 记录路径解析出来的各级名称，如路径"/a/b/c"，
-     * 数组 name 每次的值分别是"a","b","c" */
+    /* 
+     * 记录路径解析出来的各级名称，如路径"/a/b/c"，
+     * 数组 name 每次的值分别是"a","b","c"
+     */
     char name[MAX_FILE_NAME_LEN] = {0};
 
     searched_record->parent_dir = parent_dir;
