@@ -9,8 +9,8 @@
 #define BLOCK_SIZE SECTOR_SIZE  // 块字节大小
 #define MAX_PATH_LEN 512        // 路径最大长度
 
-// extern struct partition *cur_part; // 默认情况下操作的是哪个分区
-struct partition *cur_part; // 默认情况下操作的是哪个分区
+extern struct partition *cur_part; // 默认情况下操作的是哪个分区
+// struct partition *cur_part; // 默认情况下操作的是哪个分区
 
 /* 文件类型 */
 enum file_types
@@ -40,16 +40,16 @@ struct path_search_record
 };
 
 /* 在分区链表中找到名为 part_name 的分区，并将其指针赋值给 cur_part */
-static bool mount_partition(struct list_elem *pelem, int arg);
+// static bool mount_partition(struct list_elem *pelem, int arg);
 
 /* 格式化分区，也就是初始化分区的元信息，创建文件系统 */
-static void partition_format(struct disk *hd, struct partition *part);
+// static void partition_format(struct partition *part);
 
 /* 在磁盘上搜索文件系统，若没有则格式化分区创建文件系统 */
 void filesys_init();
 
 /* 将最上层路径名称解析出来 */
-static char *path_parse(char *pathname, char *name_store);
+static const char *path_parse(const char *pathname, char *name_store);
 
 /* 返回路径深度，比如/a/b/c，深度为 3 */
 int32_t path_depth_cnt(char *pathname);

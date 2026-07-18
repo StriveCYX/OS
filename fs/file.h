@@ -3,6 +3,7 @@
 
 #include "stdint.h"
 #include "ide.h"
+#include "dir.h"
 
 /* 文件结构 */
 struct file

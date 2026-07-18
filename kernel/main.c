@@ -7,6 +7,7 @@
 #include "syscall-init.h"
 #include "syscall.h"
 #include "stdio.h"
+#include "fs.h"
 
 /* 在线程中运行的函数 */
 void k_thread_a(void *arg);
@@ -21,6 +22,7 @@ int main(void)
    intr_enable();
    thread_start("k_thread_a", 31, k_thread_a, "I am thread_a");
    thread_start("k_thread_b", 31, k_thread_b, "I am thread_b ");
+   sys_open("/file1", O_CREAT);
    while (1)
       ;
    return 0;

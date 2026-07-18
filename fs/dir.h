@@ -6,6 +6,7 @@
 #include "file.h"
 #include "ide.h"
 #include "inode.h"
+#include "fs.h"
 
 extern struct dir root_dir;    // 根目录
 

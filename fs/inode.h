@@ -2,6 +2,7 @@
 #define __FS_INODE_H
 #include "stdint.h"
 #include "list.h"
+#include "ide.h"
 
 /* inode 结构 */
 struct inode
@@ -21,14 +22,14 @@ struct inode
 };
 
 /* 获取 inode 所在的扇区和扇区内的偏移量 */
-static void inode_locate(struct partition *part, uint32_t inode_no,
-                         struct inode_position *inode_pos);
+// static void inode_locate(struct partition *part, uint32_t inode_no,
+//                          struct inode_position *inode_pos);
 
 /* 将 inode 写入到分区 part */
 void inode_sync(struct partition *part, struct inode *inode, void *io_buf);
 
 /* 根据 i 结点号返回相应的 i 结点 */
-struct inode *inode_open(struct partition *part, uint32_t inode_no);
+// struct inode *inode_open(struct partition *part, uint32_t inode_no);
 
 /* 关闭 inode 或减少 inode 的打开数 */
 void inode_close(struct inode *inode);

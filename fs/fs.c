@@ -6,6 +6,9 @@
 #include "dir.h"
 #include "stdio-kernel.h"
 #include "string.h"
+#include "debug.h"
+
+struct partition *cur_part; // 默认情况下操作的是哪个分区
 
 /* 在分区链表中找到名为 part_name 的分区，并将其指针赋值给 cur_part */
 static bool mount_partition(struct list_elem *pelem, int arg)
@@ -81,7 +84,7 @@ static bool mount_partition(struct list_elem *pelem, int arg)
 }
 
 /* 格式化分区，也就是初始化分区的元信息，创建文件系统 */
-static void partition_format(struct disk *hd, struct partition *part)
+static void partition_format(struct partition *part)
 {
     /* blocks_bitmap_init（为方便实现，一个块大小是一扇区）*/
     uint32_t boot_sector_sects = 1;
@@ -289,7 +292,7 @@ void filesys_init()
                     { // 其他文件系统不支持，一律按无文件系统处理
                         printk("formatting %s`s partition %s......\n",
                                hd->name, part->name);
-                        partition_format(hd, part); // 源代码为partition_format(part);
+                        partition_format(part); // 源代码为partition_format(part);
                     }
                 }
                 part_idx++;

@@ -1,5 +1,7 @@
 #include "dir.h"
 #include "fs.h"
+#include "string.h"
+#include "debug.h"
 
 struct dir root_dir;    // 根目录
 

@@ -118,7 +118,8 @@ struct gdt_desc {
 
 #define NULL ((void*)0)
 #define DIV_ROUND_UP(X, STEP) ((X + STEP - 1) / (STEP))
-#define bool int
+// #define bool int
+typedef char bool;
 #define true 1
 #define false 0
 
