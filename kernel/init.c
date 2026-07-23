@@ -9,6 +9,7 @@
 #include "tss.h"
 #include "syscall-init.h"
 #include "ide.h"
+#include "fs.h"
 
 /*负责初始化所有模块 */
 void init_all()
@@ -22,5 +23,6 @@ void init_all()
    keyboard_init(); // 键盘初始化
    tss_init();      // tss初始化
    syscall_init();  // 初始化系统调用
-   ide_init();  // /* 硬盘数据结构初始化 */
+   ide_init();       // 硬盘数据结构初始化
+   filesys_init();   // 初始化文件系统
 }

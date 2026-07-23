@@ -50,7 +50,7 @@ extern struct ide_channel channels[2];    // 有两个 ide 通道
 extern struct list partition_list;        // 分区队列
 
 /* 硬盘数据结构初始化 */
-void ide_init();
+void ide_init(void);
 /* 从硬盘读取 sec_cnt 个扇区到 buf */
 void ide_read(struct disk *hd, uint32_t lba, void *buf, uint32_t sec_cnt);
 /* 将 buf 中 sec_cnt 扇区数据写入硬盘 */

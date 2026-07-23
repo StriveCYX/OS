@@ -46,13 +46,13 @@ struct path_search_record
 // static void partition_format(struct partition *part);
 
 /* 在磁盘上搜索文件系统，若没有则格式化分区创建文件系统 */
-void filesys_init();
+void filesys_init(void);
 
 /* 将最上层路径名称解析出来 */
-static const char *path_parse(const char *pathname, char *name_store);
+// static const char *path_parse(const char *pathname, char *name_store);
 
 /* 返回路径深度，比如/a/b/c，深度为 3 */
-int32_t path_depth_cnt(char *pathname);
+int32_t path_depth_cnt(const char *pathname);
 
 /* 打开或创建文件成功后，返回文件描述符，否则返回-1 */
 int32_t sys_open(const char* pathname, uint8_t flags);

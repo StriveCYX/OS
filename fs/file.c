@@ -4,6 +4,7 @@
 #include "inode.h"
 #include "string.h"
 #include "debug.h"
+#include "stdio-kernel.h"
 
 /* 文件表 */
 struct file file_table[MAX_FILE_OPEN];
@@ -192,8 +193,10 @@ rollback:
     case 3:
         /* 失败时，将 file_table 中的相应位清空 */
         memset(&file_table[fd_idx], 0, sizeof(struct file));
+        /* fall through */
     case 2:
         sys_free(new_file_inode);
+        /* fall through */
     case 1:
         /* 如果新文件的 i 结点创建失败，
         之前位图中分配的 inode_no 也要恢复 */

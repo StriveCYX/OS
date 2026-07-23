@@ -345,10 +345,10 @@ static const char *path_parse(const char *pathname, char *name_store)
 }
 
 /* 返回路径深度，比如/a/b/c，深度为 3 */
-int32_t path_depth_cnt(char *pathname)
+int32_t path_depth_cnt(const char *pathname)
 {
     ASSERT(pathname != NULL);
-    char *p = pathname;
+    const char *p = pathname;
     char name[MAX_FILE_NAME_LEN];
     // 用于 path_parse 的参数做路径解析
     uint32_t depth = 0;

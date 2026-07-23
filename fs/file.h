@@ -5,6 +5,8 @@
 #include "ide.h"
 #include "dir.h"
 
+struct dir;
+
 /* 文件结构 */
 struct file
 {

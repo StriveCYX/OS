@@ -118,4 +118,8 @@ void schedule(void);
 void thread_init(void);
 void thread_block(enum task_status stat);
 void thread_unblock(struct task_struct *pthread);
+
+/* 主动让出 cpu，换其他线程运行 */
+void thread_yield(void);
+
 #endif

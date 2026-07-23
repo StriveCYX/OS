@@ -2,6 +2,12 @@
 #include "io.h"
 #include "debug.h"
 #include "stdio-kernel.h"
+#include "interrupt.h"
+#include "stdio.h"
+#include "timer.h"
+#include "string.h"
+
+#include "print.h"
 
 /* 定义硬盘各寄存器的端口号 */
 #define reg_data(channel) (channel->port_base + 0)
@@ -166,6 +172,12 @@ static bool busy_wait(struct disk *hd)
 /* 从硬盘读取 sec_cnt 个扇区到 buf */
 void ide_read(struct disk *hd, uint32_t lba, void *buf, uint32_t sec_cnt)
 {
+    put_str("ide_read|   ");
+    put_str("lba: "); put_int(lba);
+    put_str("   ");
+    put_str("max_lba: "); put_int(max_lba);
+    
+
     ASSERT(lba <= max_lba);
     ASSERT(sec_cnt > 0);
     lock_acquire(&hd->my_channel->lock);
@@ -268,7 +280,7 @@ void ide_write(struct disk *hd, uint32_t lba, void *buf, uint32_t sec_cnt)
 }
 
 /* 硬盘中断处理程序 */
-void intr_hd_handler(uint8_t irq_no)
+static void intr_hd_handler(uint8_t irq_no)
 {
     ASSERT(irq_no == 0x2e || irq_no == 0x2f);
     uint8_t ch_no = irq_no - 0x2e;
@@ -406,7 +418,7 @@ static bool partition_info(struct list_elem *pelem, int arg UNUSED)
 }
 
 /* 硬盘数据结构初始化 */
-void ide_init()
+void ide_init(void)
 {
     printk("ide_init start\n");
     uint8_t hd_cnt = *((uint8_t *)(0x475)); // 获取硬盘的数量

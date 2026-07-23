@@ -4,9 +4,9 @@ AS = nasm
 CC = gcc
 LD = ld
 LIB = -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -I userprog/ -I fs/
-ASFLAGS = -f elf
+ASFLAGS = -f elf 
 CFLAGS = -m32 -Wall $(LIB) -c -fno-builtin -W -Wstrict-prototypes \
-		-Wmissing-prototypes -fno-stack-protector
+		-Wmissing-prototypes -fno-stack-protector 
 LDFLAGS = -m elf_i386 -Ttext $(ENTRY_POINT) -e main -Map $(BUILD_DIR)/kernel.map
 OBJS = $(BUILD_DIR)/main.o $(BUILD_DIR)/init.o $(BUILD_DIR)/interrupt.o \
 		$(BUILD_DIR)/timer.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/print.o \
@@ -95,10 +95,13 @@ mk_dir:
 clean:
 	cd $(BUILD_DIR) && rm -f ./*
 
+gdb_symbol:
+	objcopy --only-keep-debug $(BUILD_DIR)/kernel.bin $(BUILD_DIR)/kernel.sym
+
 build: $(BUILD_DIR)/kernel.bin
 
 hd:
-	dd if=build/kernel.bin of=/home/cent-os/Programs/bochs/hd60M.img bs=512 count=200 seek=9 conv=notrunc
+	dd if=build/kernel.bin of=/home/cyx/Programs/bochs_file/hd60M.img bs=512 count=200 seek=9 conv=notrunc
 
 all: mk_dir build hd
 

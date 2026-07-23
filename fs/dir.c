@@ -2,6 +2,8 @@
 #include "fs.h"
 #include "string.h"
 #include "debug.h"
+#include "inode.h"
+#include "stdio-kernel.h"
 
 struct dir root_dir;    // 根目录
 

@@ -29,7 +29,7 @@ struct inode
 void inode_sync(struct partition *part, struct inode *inode, void *io_buf);
 
 /* 根据 i 结点号返回相应的 i 结点 */
-// struct inode *inode_open(struct partition *part, uint32_t inode_no);
+struct inode *inode_open(struct partition *part, uint32_t inode_no);
 
 /* 关闭 inode 或减少 inode 的打开数 */
 void inode_close(struct inode *inode);
