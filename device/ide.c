@@ -173,10 +173,11 @@ static bool busy_wait(struct disk *hd)
 void ide_read(struct disk *hd, uint32_t lba, void *buf, uint32_t sec_cnt)
 {
     put_str("ide_read|   ");
-    put_str("lba: "); put_int(lba);
+    put_str("lba: ");
+    put_int(lba);
     put_str("   ");
-    put_str("max_lba: "); put_int(max_lba);
-    
+    put_str("max_lba: ");
+    put_int(max_lba);
 
     ASSERT(lba <= max_lba);
     ASSERT(sec_cnt > 0);
@@ -423,8 +424,10 @@ void ide_init(void)
     printk("ide_init start\n");
     uint8_t hd_cnt = *((uint8_t *)(0x475)); // 获取硬盘的数量
     ASSERT(hd_cnt > 0);
-    channel_cnt = DIV_ROUND_UP(hd_cnt, 2);
-    // 一个 ide 通道上有两个硬盘，根据硬盘数量反推有几个 ide 通道
+
+    list_init(&partition_list); // 初始化partition_list
+
+    channel_cnt = DIV_ROUND_UP(hd_cnt, 2);    // 一个 ide 通道上有两个硬盘，根据硬盘数量反推有几个 ide 通道
     struct ide_channel *channel;
     uint8_t channel_no = 0, dev_no = 0;
 
@@ -438,23 +441,18 @@ void ide_init(void)
         switch (channel_no)
         {
         case 0:
-            channel->port_base = 0x1f0;
-            // ide0 通道的起始端口号是 0x1f0
-            channel->irq_no = 0x20 + 14;
-            // 从片 8259a 上倒数第二的中断引脚
-            // 硬盘，也就是 ide0 通道的中断向量号
+            channel->port_base = 0x1f0;  // ide0 通道的起始端口号是 0x1f0
+            channel->irq_no = 0x20 + 14; // 从片 8259a 上倒数第二的中断引脚
+                                         // 硬盘，也就是 ide0 通道的中断向量号
             break;
         case 1:
-            channel->port_base = 0x170;
-            // ide1 通道的起始端口号是 0x170
-            channel->irq_no = 0x20 + 15;
-            // 从 8259A 上的最后一个中断引脚
-            // 我们用来响应 ide1 通道上的硬盘中断
+            channel->port_base = 0x170;  // ide1 通道的起始端口号是 0x170
+            channel->irq_no = 0x20 + 15; // 从 8259A 上的最后一个中断引脚
+                                         // 我们用来响应 ide1 通道上的硬盘中断
             break;
         }
 
-        channel->expecting_intr = false;
-        // 未向硬盘写入指令时不期待硬盘的中断
+        channel->expecting_intr = false; // 未向硬盘写入指令时不期待硬盘的中断
         lock_init(&channel->lock);
 
         /* 初始化为 0，目的是向硬盘控制器请求数据后，
@@ -463,29 +461,26 @@ void ide_init(void)
         由中断处理程序将此信号量 sema_up，唤醒线程 */
         sema_init(&channel->disk_done, 0);
         register_handler(channel->irq_no, intr_hd_handler);
+
+        /* 分别获取两个硬盘的参数及分区信息 */
+        while (dev_no < 2)
+        {
+            struct disk *hd = &channel->devices[dev_no];
+            hd->my_channel = channel;
+            hd->dev_no = dev_no;
+            sprintf(hd->name, "sd%c", 'a' + channel_no * 2 + dev_no);
+            identify_disk(hd); // 获取硬盘参数
+            if (dev_no != 0)
+            {                          // 内核本身的裸硬盘（hd60M.img）不处理
+                partition_scan(hd, 0); // 扫描该硬盘上的分区
+            }
+            p_no = 0, l_no = 0;
+            dev_no++;
+        }
+        
+        dev_no = 0; // 将硬盘驱动器号置 0，为下一个 channel 的两个硬盘初始化
         channel_no++; // 下一个 channel
     }
-
-    list_init(&partition_list);     //初始化partition_list
-
-    /* 分别获取两个硬盘的参数及分区信息 */
-    while (dev_no < 2)
-    {
-        struct disk *hd = &channel->devices[dev_no];
-        hd->my_channel = channel;
-        hd->dev_no = dev_no;
-        sprintf(hd->name, "sd%c", 'a' + channel_no * 2 + dev_no);
-        identify_disk(hd); // 获取硬盘参数
-        if (dev_no != 0)
-        {                          // 内核本身的裸硬盘（hd60M.img）不处理
-            partition_scan(hd, 0); // 扫描该硬盘上的分区
-        }
-        p_no = 0, l_no = 0;
-        dev_no++;
-    }
-    dev_no = 0;
-    // 将硬盘驱动器号置 0，为下一个 channel 的两个硬盘初始化
-    channel_no++; // 下一个 channel
 
     printk("\n all partition info\n");
     /* 打印所有分区信息 */

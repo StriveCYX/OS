@@ -1,6 +1,5 @@
-	%include "./include/boot.inc"
-	section loader vstart=LOADER_BASE_ADDR
-
+   %include "./include/boot.inc"
+   section loader vstart=LOADER_BASE_ADDR
 ;构建gdt及其内部的描述符
    GDT_BASE:   dd    0x00000000 
 	       dd    0x00000000
@@ -150,9 +149,8 @@ p_mode_start:
    mov ebx, KERNEL_BIN_BASE_ADDR       ; 从磁盘读出后，写入到ebx指定的地址
    mov ecx, 200			       ; 读入的扇区数
 
-	mov byte [gs:162], 's'
    call rd_disk_m_32
-mov byte [gs:164], 's'
+
    ; 创建页目录及页表并初始化页内存位图
    call setup_page
 

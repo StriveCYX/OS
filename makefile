@@ -4,9 +4,9 @@ AS = nasm
 CC = gcc
 LD = ld
 LIB = -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -I userprog/ -I fs/
-ASFLAGS = -f elf 
+ASFLAGS = -f elf -g
 CFLAGS = -m32 -Wall $(LIB) -c -fno-builtin -W -Wstrict-prototypes \
-		-Wmissing-prototypes -fno-stack-protector 
+		-Wmissing-prototypes -fno-stack-protector -g
 LDFLAGS = -m elf_i386 -Ttext $(ENTRY_POINT) -e main -Map $(BUILD_DIR)/kernel.map
 OBJS = $(BUILD_DIR)/main.o $(BUILD_DIR)/init.o $(BUILD_DIR)/interrupt.o \
 		$(BUILD_DIR)/timer.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/print.o \

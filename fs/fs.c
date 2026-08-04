@@ -309,8 +309,9 @@ void filesys_init()
     /* 挂载分区 */
     list_traversal(&partition_list, mount_partition, (int)default_part);
 
+    ASSERT(cur_part != NULL);
     /* 将当前分区的根目录打开 */
-    open_root_dir(cur_part);
+    open_root_dir(cur_part);    // 这里可能有错误,cur_part==NULL，没有赋值
 
     /* 初始化文件表 */
     uint32_t fd_idx = 0;
