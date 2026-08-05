@@ -118,11 +118,14 @@ struct gdt_desc {
 
 #define NULL ((void*)0)
 #define DIV_ROUND_UP(X, STEP) ((X + STEP - 1) / (STEP))
+
 // c23标准的bool已经是关键字了
-// #define bool unsigned char
-// typedef unsigned char bool;
-#define true 1
-#define false 0
+#if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 202311L
+   typedef unsigned char bool;
+   #define false ((unsigned char)(0))
+   #define true ((unsigned char)(1))
+#endif
+
 
 #define PG_SIZE 4096
 
