@@ -311,7 +311,7 @@ void filesys_init()
 
     ASSERT(cur_part != NULL);
     /* 将当前分区的根目录打开 */
-    open_root_dir(cur_part);    // 这里可能有错误,cur_part==NULL，没有赋值
+    open_root_dir(cur_part); // 这里可能有错误,cur_part==NULL，没有赋值
 
     /* 初始化文件表 */
     uint32_t fd_idx = 0;
@@ -391,7 +391,7 @@ static int search_file(const char *pathname,
     struct dir *parent_dir = &root_dir;
     struct dir_entry dir_e;
 
-    /* 
+    /*
      * 记录路径解析出来的各级名称，如路径"/a/b/c"，
      * 数组 name 每次的值分别是"a","b","c"
      */
@@ -528,7 +528,10 @@ int32_t sys_open(const char *pathname, uint8_t flags)
         fd = file_create(searched_record.parent_dir,
                          (strrchr(pathname, '/') + 1), flags);
         dir_close(searched_record.parent_dir);
-        // 其余为打开文件
+    default:
+        /* 其余情况均为打开已存在文件
+         * O_RDONLY,O_WRONLY,O_RDWR */
+        fd = file_open(inode_no, flags);
     }
 
     /* 此 fd 是指任务 pcb->fd_table 数组中的元素下标，
